@@ -1,0 +1,19 @@
+require code_gen
+require config
+require lexer
+require parser
+# This is the entrypoint of the compiler
+
+:main
+    config = Config()
+    source = read_source(config)
+    tokens = lex(source, config)
+    tree = parse(tokens, config)
+    gen_output(tree, config)
+end
+
+# Reads the source based on the configuration
+# Config -> String
+:read_source(config)
+    ""
+end

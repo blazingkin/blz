@@ -1,0 +1,5 @@
+# Lexes the given source
+# String, Config -> [Token]
+:lex(source, config)
+
+end

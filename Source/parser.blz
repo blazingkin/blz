@@ -1,0 +1,5 @@
+# parse - takes a list of tokens and processes them into an Abstract Syntax Tree
+# [Token], Config -> TreeNode
+:parse(tokens, config)
+
+end

@@ -1,0 +1,6 @@
+# Generates code output based on config
+# This could be x86_64, MIPS, C Source, or any other compilation target
+# SyntaxNode, Config -> String
+:gen_output(tree, config)
+ 
+end
