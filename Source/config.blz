@@ -1,3 +1,15 @@
+import Flag
 constructor Config
-
+    try
+        generation_type = Flag("g", "string", false, "x86_64", "The expected generated output type", "generate").value
+        output_destination = Flag("o", "string", false, "a.out", "The path of the destination file", "output").value
+        needs_help = Flag("h", "boolean", false, false, "If the help message should be printed", "help").value
+        if needs_help
+            Flag().print_usage()
+        end
+    catch exception
+        print(exception)
+        Flag().print_usage()
+    end
+    source_files = Flag().normal_args()
 end

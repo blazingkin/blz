@@ -1,3 +1,72 @@
-constructor Token
+# Token types are
+token_types = ["BINARY_OP", "UNARY_OP", "ENV_LOOKUP", "LITERAL", "BRACKET", "ID", "KEYWORD", "NEWLINE"]
+constructor Token(tok_type, text)
+    if token_types.contains?(tok_type).negate()
+        throw InvalidTokenError("Unknown token type "+tok_type)
+    end
+
+    :show
+        "<Token " + tok_type + ", [" + text + "]>"
+    end
+    
+    :==(other)
+        other.type == "Token" && this.tok_type == other.tok_type && this.text == other.text
+    end
 
 end
+
+constructor InvalidTokenError(message)
+    :show
+        message
+    end
+end
+
+# BRACKET
+# ========
+# PAREN_OPEN
+# PAREN_CLOSE
+# SQ_BRACKET_OPEN
+# SQ_BRACKET_CLOSE
+
+# BINARY
+# ========
+# <
+# <=
+# >
+# >=
+# ;
+# ||
+# &&
+# ==
+# !=
+# ~=
+# *
+# **
+# /
+# %
+# __
+# +
+# -
+# .
+# ,
+
+# ENV_LOOKUP
+# ========
+# name.of.env
+
+# UNARY
+# ========
+# ++
+# --
+
+# LITERAL
+# ========
+# "string"
+# 1223 (number)
+
+# ID
+# ========
+# a
+# b
+# true
+# false

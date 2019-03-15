@@ -1,5 +1,103 @@
-# Lexes the given source
-# String, Config -> [Token]
-:lex(source, config)
+require token
+require parse_error
 
+
+keywords = ["if", "while", "for", "constructor", "import", "require", "end"]
+
+:potential_keyword?(str)
+    keywords.map(x -> x.starts_with?(str)).any!?()
 end
+
+:is_keyword?(str)
+    keywords.map(x -> x == str).any!?()
+end
+
+:whitespace?(char)
+    char == " " || char == "\r" || char == "\n" || char == "\t"
+end
+
+:tok?(str)
+    str != ""
+end
+
+reserved_tokens = ["(", ")", "[", "]", "{", "}", "<", ">", ";", "|", "&", "=", "~", "*", "/", "%", "_", "!", "+", "-", ".", ",", "\""]
+:is_ident_start?(str)
+    return reserved_tokens.contains?(str) == false && str.is_number?() == false
+end
+:is_ident_nonstart?(str)
+    return reserved_tokens.contains?(str) == false || str == "!" || str == "_"
+end
+
+# Lexes the given source
+# SourceFile, Config -> [Token]
+:lex(source_file, config)
+    source = source_file.source
+    building = ""
+    in_bounds? = ((n) -> n < source.size())
+    tokens = []
+    line_number = 1
+    for i = 0; i < source.size(); i++
+        current_char = source[i]
+        if current_char == "("
+            tokens.add!(Token("BRACKET", "PAREN_OPEN"))
+        else if current_char == ")"
+            tokens.add!(Token("BRACKET", "PAREN_CLOSE"))
+        else if current_char == "["
+            tokens.add!(Token("BRACKET", "SQ_BRACKET_OPEN"))
+        else if current_char == "]"
+            tokens.add!(Token("BRACKET", "SQ_BRACKET_CLOSE"))
+        else if current_char == "{"
+            print("Environment variable not yet implemented")
+        else if current_char == "<"
+            if in_bounds?(i + 1) && source[i + 1] == "="
+                i++
+                tokens.add!(Token("BINARY_OP", "<="))
+            else
+                tokens.add!(Token("BINARY_OP", "<"))
+            end
+        else if current_char == ">"
+            if in_bounds?(i + 1) && source[i + 1] == "="
+                i++
+                tokens.add!(Token("BINARY_OP", ">="))
+            else
+                tokens.add!(Token("BINARY_OP", ">"))
+            end
+        else if current_char == ";"
+            tokens.add!(Token("BINARY_OP", ";"))
+        else if current_char == "|"
+            if in_bounds?(i + 1) && source[i + 1] == "|"
+                tokens.add!(Token("BINARY_OP", "||"))
+            else
+                throw ParseError("LONE_PIPE", get_line(source, line_number), line_number)
+            end
+        else if current_char == "\n"
+            tokens.add!(Token("NEWLINE", ""))
+            line_number++
+        end
+    end
+    if tok?(building)
+        tokens.add!(Token("ID", building))
+    end
+    return tokens
+end
+
+:get_line(source, line_number)
+    return source.split_on_token("\n")[line_number - 1]
+end
+
+
+#        building = building + source[i]
+#        if potential_keyword?!(building)
+#            if is_keyword?!(building)
+#                tokens.add!(Token("KEYWORD", building))
+#                building = ""
+#            end
+#        else
+#            if whitespace?(source[i])
+#                building.trim!()
+#                if tok?(building)
+#                    building = ""
+#                    tokens.add!(Token("ID", building))
+#                end
+#            end
+#        end

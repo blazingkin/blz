@@ -1,0 +1,24 @@
+constructor ParseError(kind, line, line_number)
+
+    messages = {}
+    messages["LONE_PIPE"] = "Unexpected | in line"
+    messages["LONE_AMP"] = "Unexpected & in line"
+    messages["LONE_TILDE"] = "Unexpected ~ in line"
+    messages["LONE_UNDERSCORE"] = "Unexpected _ in line"
+    messages["UNCLOSED_STRING"] = "String not closed on line"
+    messages["UNEXPECTED_CHARACTER"] = "Unexpected character on line"
+    :message
+        messages[kind]
+    end
+
+    :show
+        if line_number != {blz.nil}
+            message() + "\n" + line_number + ": " + line
+        else if line != {blz.nil}
+            message() + "\n" + line
+        else
+            message()
+        end
+    end
+
+end

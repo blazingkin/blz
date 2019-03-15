@@ -1,0 +1,18 @@
+import FileSystem
+
+# Map from paths to SourceFiles to stop duplicates
+registered_source_files = {}
+constructor SourceFile(path)
+    handle = open(path, "r")
+    source = handle.read_all()
+end
+
+:read_source(path)
+    if registered_source_files.has_key?(path)
+        registered_source_files[path]
+    else
+        sf = SourceFile(path)
+        registered_source_files[path] = sf
+        sf
+    end
+end

@@ -1,0 +1,35 @@
+import Test
+require lexer
+require token
+
+:test_potential_keyword
+    expect(potential_keyword?("i")).is(true)
+    expect(potential_keyword?("if")).is(true)
+    expect(potential_keyword?("if ")).is(false)
+    expect(potential_keyword?("constr")).is(true)
+end
+
+:test_is_keyword
+    expect(is_keyword?("if")).is(true)
+    expect(is_keyword?("end")).is(true)
+    expect(is_keyword?("while")).is(true)
+    expect(is_keyword?("for")).is(true)
+    expect(is_keyword?("i")).is(false)
+end
+
+:test_is_ident_start
+    expect(is_ident_start?("&")).is(false)
+    expect(is_ident_start?("a")).is(true)
+    expect(is_ident_start?("3")).is(false)
+end
+
+constructor StubSource(str)
+    source = str
+end
+
+:test_lex_basic
+    expect(lex(StubSource("<"))).is([Token("BINARY_OP", "<")])
+    expect(lex(StubSource("<="))).is([Token("BINARY_OP", "<=")])
+    expect(lex(StubSource(">"))).is([Token("BINARY_OP", ">")])
+    expect(lex(StubSource(">="))).is([Token("BINARY_OP", ">=")])
+end
