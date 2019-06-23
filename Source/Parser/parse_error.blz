@@ -11,6 +11,10 @@ constructor ParseError(kind, line, line_number)
         messages[kind]
     end
 
+    :==(other)
+        return other.type == "ParseError" && kind == other.kind && line == other.line && line_number == other.line_number
+    end
+
     :show
         if line_number != {blz.nil}
             message() + "\n" + line_number + ": " + line

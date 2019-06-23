@@ -1,7 +1,7 @@
 require code_gen
 require config
-require lexer
-require parser
+require Lexer/lexer
+require Parser/parser
 require source_file
 # This is the entrypoint of the compiler
 

@@ -1,0 +1,2 @@
+#!/bin/bash
+blz Source/blz_on_blz.blz $@
