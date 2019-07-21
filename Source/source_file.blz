@@ -5,6 +5,11 @@ registered_source_files = {}
 constructor SourceFile(path)
     handle = open(path, "r")
     source = handle.read_all()
+
+    :show
+        path
+    end
+
 end
 
 :read_source(path)

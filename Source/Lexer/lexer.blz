@@ -79,16 +79,17 @@ end
                 i++
                 tokens.add!(Token("BINARY_OP", "||"))
             else
-                throw ParseError("LONE_PIPE", get_line(source, line_number), line_number)
+                tokens.add!(Token("BINARY_OP", "|"))
             end
         else if current_char == "&"
             if in_bounds?(i + 1) && source[i + 1] == "&"
                 i++
                 tokens.add!(Token("BINARY_OP", "&&"))
             else
-                throw ParseError("LONE_AND", get_line(source, line_number), line_number)
+                tokens.add!(Token("BINARY_OP", "&"))
             end
         else if current_char == "~"
+            # Must be ~=
             if in_bounds?(i + 1) && source[i + 1] == "="
                 i++
                 tokens.add!(Token("BINARY_OP", "~="))
@@ -96,12 +97,40 @@ end
                 throw ParseError("LONE_TILDE", get_line(source, line_number), line_number)
             end
         else if current_char == "_"
+            # Only one operator is valid __
             if in_bounds?(i + 1) && source[i + 1] == "_"
                 i++
                 tokens.add!(Token("BINARY_OP", "__"))
             else
                 throw ParseError("LONE_UNDERSCORE", get_line(source, line_number), line_number)
             end
+        else if current_char == "!"
+            #TODO
+        else if current_char == "+"
+            #TODO
+        else if current_char == "-"
+            # Check for --
+            if in_bounds?(i + 1) && source[i + 1] == "-"
+                i++
+                tokens.add!(Token("UNARY_OP", "--"))
+
+            # Maybe it is a lambda? (->)
+            else if in_bounds?(i + 1) && source[i + 1] == ">"
+                i++
+                tokens.add!(Token("BINARY_OP", "->"))
+            
+            # It is a -
+            else
+                tokens.add!(Token("BINARY_OP", "-"))
+            end
+        else if current_char == "."
+            tokens.add!(Token("BINARY_OP", "."))
+        else if current_char == ","
+            tokens.add!(Token("BINARY_OP", ","))
+        else if current_char == "^"
+            #TODO
+        else if current_char == "\""
+            #TODO
         else if current_char == "\n"
             tokens.add!(Token("NEWLINE", ""))
             line_number++

@@ -1,7 +1,7 @@
 import Test
 require lexer
 require token
-require parse_error
+require ../Parser/parse_error
 
 :test_potential_keyword
     expect(potential_keyword?("i")).is(true)
@@ -36,14 +36,21 @@ end
     expect(lex(StubSource("\n"))).is([Token("NEWLINE", "")])
     expect(lex(StubSource("||&&"))).is([Token("BINARY_OP", "||"), Token("BINARY_OP", "&&")])
     expect(lex(StubSource(";\n"))).is([Token("BINARY_OP", ";"),Token("NEWLINE", "")])
+    expect(lex(StubSource("|"))).is([Token("BINARY_OP", "|")])
+    expect(lex(StubSource("&"))).is([Token("BINARY_OP", "&")])
+    expect(lex(StubSource("-"))).is([Token("BINARY_OP", "-")])
+    expect(lex(StubSource("->"))).is([Token("BINARY_OP", "->")])
+    expect(lex(StubSource("--"))).is([Token("UNARY_OP", "--")])
+    expect(lex(StubSource("."))).is([Token("BINARY_OP", ".")])
+    expect(lex(StubSource(","))).is([Token("BINARY_OP", ",")])
 end
 
 :test_single_pipe_should_throw_error
-    closure = dummy -> lex(StubSource("|"))
-    expect(closure).to_raise(ParseError("LONE_PIPE", "|", 1))
+    closure = dummy -> lex(StubSource("~"))
+    expect(closure).to_raise(ParseError("LONE_TILDE", "~", 1))
 end
 
 :test_error_message_should_include_line_properly
-    closure = dummy -> lex(StubSource("\n\n\nasdf|\n\n"))
-    expect(closure).to_raise(ParseError("LONE_PIPE", "asdf|", 4))
+    closure = dummy -> lex(StubSource("\n\n\nasdf~\n\n"))
+    expect(closure).to_raise(ParseError("LONE_TILDE", "asdf~", 4))
 end

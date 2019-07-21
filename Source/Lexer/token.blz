@@ -49,6 +49,7 @@ end
 # -
 # .
 # ,
+# ->
 
 # ENV_LOOKUP
 # ========
@@ -58,6 +59,7 @@ end
 # ========
 # ++
 # --
+# ! (Not right now, but I want it to be)
 
 # LITERAL
 # ========
@@ -70,3 +72,13 @@ end
 # b
 # true
 # false
+
+
+# Keywords
+# ========
+# if
+# end
+# while
+# constructor
+
+
