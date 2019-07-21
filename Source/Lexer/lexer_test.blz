@@ -43,6 +43,24 @@ end
     expect(lex(StubSource("--"))).is([Token("UNARY_OP", "--")])
     expect(lex(StubSource("."))).is([Token("BINARY_OP", ".")])
     expect(lex(StubSource(","))).is([Token("BINARY_OP", ",")])
+    expect(lex(StubSource("^"))).is([Token("BINARY_OP", "^")])
+end
+
+:test_valid_strings
+    strings = ["","abc","a$!@%@%", "123156"]
+    strings.each(s -> expect(lex(StubSource("\"" + s + "\""))).is([Token("LITERAL", s)]))
+end
+
+:test_unclosed_string
+    string = "\"asdf"
+    closure = dummy -> lex(StubSource(string))
+    expect(closure).to_raise(ParseError("UNCLOSED_STRING", string, 1))
+end
+
+:test_unclosed_string_with_newline
+    string = "\"asdf\n\""
+    closure = dummy -> lex(StubSource(string))
+    expect(closure).to_raise(ParseError("UNCLOSED_STRING", "\"asdf", 1))
 end
 
 :test_single_pipe_should_throw_error

@@ -28,6 +28,20 @@ end
     return reserved_tokens.contains?(str) == false || str == "!" || str == "_"
 end
 
+:translate_escape(char)
+    if char == "\\"
+        "\\"
+    else if char == "n"
+        "\n"
+    else if char == "t"
+        "\t"
+    else if char == "r"
+        "\r"
+    else if char == "b"
+        "\b"
+    end
+end
+
 # Lexes the given source
 # SourceFile, Config -> [Token]
 :lex(source_file, config)
@@ -128,9 +142,34 @@ end
         else if current_char == ","
             tokens.add!(Token("BINARY_OP", ","))
         else if current_char == "^"
-            #TODO
+            tokens.add!(Token("BINARY_OP", "^"))
         else if current_char == "\""
-            #TODO
+            done = false
+            found_end = false
+            building = ""
+            while done == false && in_bounds?(i + 1)
+                i++
+                looking_at = source[i]
+                if looking_at == "\""
+                    done = true
+                    found_end = true
+                else if looking_at == "\\"
+                    i++
+                    if in_bounds?(i)
+                        building = building + translate_escape(source[i])
+                    end
+                else if looking_at == "\n"
+                    done = true
+                    # The string should not continue over a new line
+                else
+                    building = building + looking_at
+                end
+            end
+            if found_end == false
+                throw ParseError("UNCLOSED_STRING", get_line(source, line_number), line_number)
+            end
+            tokens.add!(Token("LITERAL", building))
+            building = ""
         else if current_char == "\n"
             tokens.add!(Token("NEWLINE", ""))
             line_number++
