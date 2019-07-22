@@ -22,10 +22,10 @@ end
 
 reserved_tokens = ["(", ")", "[", "]", "{", "}", "<", ">", ";", "|", "&", "=", "~", "*", "/", "%", "_", "!", "+", "-", ".", ",", "\""]
 :is_ident_start?(str)
-    return reserved_tokens.contains?(str) == false && str.is_number?() == false
+    return reserved_tokens.contains?(str) == false && str.is_number?() == false && whitespace?(str) == false
 end
 :is_ident_nonstart?(str)
-    return reserved_tokens.contains?(str) == false || str == "!" || str == "_"
+    return (reserved_tokens.contains?(str) == false || str == "!" || str == "_") && whitespace?(str) == false
 end
 
 :translate_escape(char)
@@ -121,7 +121,12 @@ end
         else if current_char == "!"
             #TODO
         else if current_char == "+"
-            #TODO
+            if in_bounds?(i + 1) && source[i + 1] == "+"
+                i++
+                tokens.add!(Token("UNARY_OP", "++"))
+            else
+                tokens.add!(Token("BINARY_OP", "+"))
+            end
         else if current_char == "-"
             # Check for --
             if in_bounds?(i + 1) && source[i + 1] == "-"
@@ -173,6 +178,14 @@ end
         else if current_char == "\n"
             tokens.add!(Token("NEWLINE", ""))
             line_number++
+        else if is_ident_start?(current_char)
+           building = current_char
+           while in_bounds?(i + 1) && is_ident_nonstart?(source[i + 1])
+                i++
+                building = building + source[i]
+           end
+           tokens.add!(Token("ID", building))
+           building = ""
         end
     end
     if tok?(building)

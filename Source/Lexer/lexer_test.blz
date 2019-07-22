@@ -63,6 +63,15 @@ end
     expect(closure).to_raise(ParseError("UNCLOSED_STRING", "\"asdf", 1))
 end
 
+:test_token_lexing
+    expect(lex(StubSource("a b"))).is([Token("ID", "a"), Token("ID", "b")])
+    expect(lex(StubSource("a\nb"))).is([Token("ID", "a"), Token("NEWLINE", ""), Token("ID", "b")])
+end
+
+:test_adding_two_symbols
+    expect(lex(StubSource("long_symbol + another_one"))).is([Token("ID", "long_symbol"), Token("BINARY_OP", "+"), Token("ID", "another_one")])
+end
+
 :test_single_pipe_should_throw_error
     closure = dummy -> lex(StubSource("~"))
     expect(closure).to_raise(ParseError("LONE_TILDE", "~", 1))
